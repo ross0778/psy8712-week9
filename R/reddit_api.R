@@ -50,8 +50,22 @@ rstats_tbl %>%
        y = "Upvotes"
        ) +
   theme_bw()
-           
 
+# Analysis
+# I used cor.test() since this will calculate both the correlation, degrees of freedom (which we'll need in the publication section), and the p-value associated with the correlation
+corr <- cor.test(rstats_tbl$comments, rstats_tbl$upvotes)
+cor_estimate <- corr$estimate # this assigns r to cor_estimate
+cor_df <- corr$parameter # this assigns the degrees of freedom to cor_df
+cor_p <- corr$p.value # this assigns the p-value to cor_p
 
-  
-  
+# Publication 
+The correlation between upvotes and comments was r(98) = .36, p = .00. This test was statistically significant.
+# I used sprintf in order to force two decimal places to show the p-value since it was too small to display using round(). "%.2f" specifies exactly two decimal points using fixed-point notation. Used regex to identify the leading zero and ifelse() to specify significant vs. not significant
+cat(paste(
+  "The correlation between upvotes and comments was r(",
+  cor_df, ") = ",
+  str_remove(sprintf("%.2f", cor_estimate), "^0"), ", p = ",
+  str_remove(sprintf("%.2f", cor_p), "^0"),
+  ". This test ", ifelse(cor_p < .05, "was", "was not"), " statistically significant.",
+  sep = ""
+))

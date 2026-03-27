@@ -30,3 +30,9 @@ for(i in seq_along(sources)) {
 }
 cnbc_tbl <- bind_rows(list_cnbc)
 
+# Visualization
+cnbc_tbl %>% 
+  ggplot(aes(x = source, y = length, fill = source)) +
+  geom_boxplot() +
+  labs(title = "Headline Length by Section", x = "Section", y = "Word Count") +
+  theme_bw()

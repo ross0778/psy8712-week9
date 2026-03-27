@@ -31,8 +31,31 @@ for(i in seq_along(sources)) {
 cnbc_tbl <- bind_rows(list_cnbc)
 
 # Visualization
+# Created a boxplot since source is categorical and length is continuous
 cnbc_tbl %>% 
   ggplot(aes(x = source, y = length, fill = source)) +
-  geom_boxplot() +
+  geom_boxplot(show.legend = FALSE) +
   labs(title = "Headline Length by Section", x = "Section", y = "Word Count") +
   theme_bw()
+
+# Analysis
+# Ran an ANOVA using aov()
+cnbc_anova <- aov(length ~ source, data = cnbc_tbl)
+# This runs a summary of the ANOVA and extracts the first element of the list, which is the ANOVA table. This will let us pull out each value for the Publication section
+aov_summary <- summary(cnbc_anova)[[1]]
+f <- aov_summary[["F value"]][1]
+p <- aov_summary[["Pr(>F)"]][1]
+df_between <- aov_summary[["Df"]][1]
+df_within <- aov_summary[["Df"]][2]
+
+# Publication
+# The results of an ANOVA comparing lengths across sources was F(3, 130) = 5.28, p = .00. This test was statistically significant.
+# I used sprintf in order to force two decimal places to show the p-value since it was too small to display using round(). "%.2f" specifies exactly two decimal points using fixed-point notation. Used regex to identify the leading zero and ifelse() to specify significant vs. not significant
+cat(paste(
+  "The results of an ANOVA comparing length across sources was F(",
+  df_between, ", ", df_within, ") = ",
+  sprintf("%.2f", f), ", p = ",
+  str_remove(sprintf("%.2f", p), "^0"),
+  ". This test ", ifelse(p < .05, "was", "was not"), " statistically significant.",
+  sep = ""
+))

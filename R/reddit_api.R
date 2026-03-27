@@ -41,6 +41,7 @@ rstats_tbl <- tibble(
 )
 
 # Visualization
+# Created a scatterplot here, adding a linear regression line and removing the default CI band
 rstats_tbl %>% 
   ggplot(aes(x = comments, y = upvotes)) +
   geom_point(alpha = 0.4) +
@@ -59,7 +60,7 @@ cor_df <- corr$parameter # this assigns the degrees of freedom to cor_df
 cor_p <- corr$p.value # this assigns the p-value to cor_p
 
 # Publication 
-The correlation between upvotes and comments was r(98) = .36, p = .00. This test was statistically significant.
+# The correlation between upvotes and comments was r(98) = .36, p = .00. This test was statistically significant.
 # I used sprintf in order to force two decimal places to show the p-value since it was too small to display using round(). "%.2f" specifies exactly two decimal points using fixed-point notation. Used regex to identify the leading zero and ifelse() to specify significant vs. not significant
 cat(paste(
   "The correlation between upvotes and comments was r(",
@@ -69,3 +70,4 @@ cat(paste(
   ". This test ", ifelse(cor_p < .05, "was", "was not"), " statistically significant.",
   sep = ""
 ))
+
